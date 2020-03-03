@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - cloth simulation</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			html,body{
+				margin: 0;
+				width: 100vw;
+				height: 100vh;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<script src="./node_modules/three/examples/js/controls/THREEx.KeyboardState.js"></script>
+	<!-- <script src="./js/find-posts.js"></script> -->
+	<script src="./js/geturi.js"></script>
+	<script src="./js/jquery.js"></script>
+	<script src="./js/sendPose.js"></script>
+	<script src="./js/create.js"></script>
+
+	<body>
+		<script type="module">
+			create();
+			import * as THREE from './node_modules/three/build/three.module.js';
+
+			import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
+			import { MTLLoader } from './node_modules/three/examples/jsm/loaders/MTLLoader.js';
+			import { OBJLoader } from './node_modules/three/examples/jsm/loaders/OBJLoader.js';
+			import { ColladaLoader } from './node_modules/three/examples/jsm/loaders/ColladaLoader.js';
+			
+			var renderer, camera, scene;
+			var CarObject, ChickenObject, TreeObject, plane, Road;
+
+			var player1Pose, player1,test;
+
+			var keyboard = new THREEx.KeyboardState();
+
+			function init() {
+				var container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				// renderer
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild( renderer.domElement );
+				renderer.outputEncoding = THREE.sRGBEncoding;
+				renderer.shadowMap.enabled = true;
+
+				// scene
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0xcce0ff );
+				scene.fog = new THREE.Fog( 0xcce0ff, 500, 10000 );
+
+				// camera
+				camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 0.1, 10000 );
+				camera.position.set( 0, 700, 700 );
+				camera.rotation.x = -0.75
+
+				//var controls = new OrbitControls( camera, renderer.domElement );
+
+		//player1
+				var geometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
+				var material = new THREE.MeshBasicMaterial({color: 0x5ABC52});
+				player1 = new THREE.Mesh(geometry, material);
+				player1.position.set(0,0,0);
+				scene.add(player1);
+
+				var geometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
+				var material = new THREE.MeshBasicMaterial({color: 0x5ABC52});
+				player1Pose = new THREE.Mesh(geometry, material);
+				player1Pose.position.set(0,0,0);
+				scene.add(player1Pose);
+				player1Pose.add(player1);
+				
+
+		//ground
+				var geometry = new THREE.PlaneBufferGeometry( 20000, 20000 );
+				var material = new THREE.MeshBasicMaterial({color: 0x5ABC52});
+				plane = new THREE.Mesh(geometry, material);
+				scene.add(plane);
+				plane.rotation.x = -Math.PI/2;
+
+		//road
+				var geometry = new THREE.PlaneBufferGeometry( 500, 20000 );
+				var material = new THREE.MeshBasicMaterial({color: 0x282828});
+				Road = new THREE.Mesh(geometry, material);
+				scene.add(Road);
+				Road.position.set(0, 3, 0);
+				Road.rotation.x = -Math.PI/2;
+
+		// Car
+				function loadModelCar() {
+					CarObject.traverse( function ( child ) {
+						if ( child.isMesh ) child.material.map = textureCar;
+					} );
+					CarObject.position.set(0,23,-500);
+					CarObject.scale.set(1, 1, 1);
+					scene.add( CarObject );
+				}
+
+				var CarModel = new THREE.LoadingManager( loadModelCar );
+				CarModel.onProgress = function ( item, loaded, total ) {
+					console.log( item, loaded, total );
+				};
+				// texture
+				var textureLoader = new THREE.TextureLoader( CarModel );
+				var textureCar = textureLoader.load( './3Dmodel/textures/NewTexture.jpg' );
+
+				var loader = new OBJLoader( CarModel );
+				loader.load( './3Dmodel/source/bmw.obj', function ( obj ) {
+					CarObject = obj;
+				}, onProgress, onError );
+			
+		// Poule
+				function loadModelChicken() {
+				ChickenObject.traverse( function ( child ) {
+						if ( child.isMesh ) child.material.map = texture;
+					} );
+					ChickenObject.position.set(0, 3, -36);
+					ChickenObject.scale.set(50, 50, 50);
+					ChickenObject.rotation.y = Math.PI/2;
+					scene.add( ChickenObject );
+					player1.add(ChickenObject);
+				}
+
+				var ChickenModel = new THREE.LoadingManager( loadModelChicken );
+				ChickenModel.onProgress = function ( item, loaded, total ) {
+					console.log( item, loaded, total );
+				};
+				// texture
+				var textureLoader = new THREE.TextureLoader( ChickenModel );
+				var texture = textureLoader.load( './3Dmodel/textures/Diffuse_Chicken.png' );
+
+				var loader = new OBJLoader( ChickenModel );
+				loader.load( './3Dmodel/source/Chicken.obj', function ( obj ) {
+					ChickenObject = obj;
+				}, onProgress, onError );
+
+		// model
+				function onProgress( xhr ) {
+					if ( xhr.lengthComputable ) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log( 'model ' + Math.round( percentComplete, 2 ) + '% downloaded' );
+					}
+				}
+
+				function onError() {}
+			
+		//tree
+				/* var loader = new THREE.ColladaLoader();
+				loader.options.convertUpAxis = true;
+				loader.load('./3Dmodel/lowtree.ChickenObject', function (collada) {
+					tree = collada.scene;
+					tree.scale.set(200, 200, 200);
+					// tree.position.set(0,0.0,0);// éventuellement le déplacer
+					tree.updateMatrix();
+					scene.add(tree);
+				}); */
+
+				//
+				var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
+				scene.add( ambientLight );
+
+				var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+				directionalLight.position.set( 1, 1, 0 ).normalize();
+				scene.add( directionalLight );
+
+		
+
+
+
+
+				var geometry = new THREE.BoxGeometry( 20, 10, 10 );
+				var material = new THREE.MeshBasicMaterial({color: 0xff0000});
+				test = new THREE.Mesh(geometry, material);
+				scene.add(test);
+				test.position.set(0,10,0);
+
+
+
+
+			}
+
+			//chicken movment
+			function moovePoule() {
+				if (ChickenObject) {
+					if(keyboard.pressed("right") || keyboard.pressed("left") || keyboard.pressed("up") || keyboard.pressed("down")){
+						if (keyboard.pressed("up")) {// up arrow
+							player1.rotation.y = 0;
+							player1Pose.translateZ(-2);
+						}
+						else if (keyboard.pressed("down")) {// down arrow
+							player1.rotation.y = Math.PI;
+							player1Pose.translateZ(2);
+						}
+						else if (keyboard.pressed("left")) {// left arrow
+							player1.rotation.y = Math.PI/2;
+							player1Pose.translateX(-2);
+						}
+						else if (keyboard.pressed("right")) {// right arrow
+							player1.rotation.y = -Math.PI/2;
+							player1Pose.translateX(2);
+						}
+					}else{}
+				}
+			}
+
+			
+			function animate() {
+
+				sendPose(player1Pose.position.z, player1Pose.position.x);
+
+				moovePoule();
+
+				renderer.render( scene, camera );
+				requestAnimationFrame(function(){ animate(); });
+			}
+
+
+			init();
+			animate();
+	
+
+		</script>
+	</body>
+</html>
