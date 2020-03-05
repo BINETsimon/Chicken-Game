@@ -185,6 +185,7 @@
 			}
 
 			//chicken movment
+			var player1Walk = true;
 			function moovePoule() {
 				if (ChickenObject) {
 					if(keyboard.pressed("right") || keyboard.pressed("left") || keyboard.pressed("up") || keyboard.pressed("down")){
@@ -204,7 +205,21 @@
 							player1.rotation.y = -Math.PI/2;
 							player1Pose.translateX(2);
 						}
-					}else{}
+						
+						//animation
+						if (player1Walk == true){
+							player1.position.y += 3;
+							if (player1.position.y >= 10){
+								player1Walk = false;
+							}
+						}
+					}
+					if (player1Walk == false){
+						player1.position.y -= 1;
+						if (player1.position.y <= 0){
+							player1Walk = true;
+						}
+					}
 				}
 			}
 
