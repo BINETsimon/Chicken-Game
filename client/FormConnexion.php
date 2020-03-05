@@ -12,27 +12,33 @@
         $username = "root";
         $password = "";
         $dbname = "game";
-
         // Create connection
         $conn = new mysqli($servername, $username, $password, $dbname);
         // Check connection
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
-
-        $sql = "SELECT UserPassword FROM user WHERE Pseudo='$_POST['Pseudo']'";
+        $sql = "SELECT UserPassword FROM user WHERE Pseudo='" + $_POST['Pseudo'] + "'";
         $result = $conn->query($sql);
-
-        
-
         $conn->close();
+        if ( $_POST['password'] != $result ) {
+            echo "<form action='FormConnexion.php' method='Post'>
+                Pseudo : <br/>
+                <input type='text' name='Pseudo'><br/>
+                Password : <br/>
+                <input type='password' name='password'><br/>
+                <input type='submit' value='Connect'><br/>
+            </form>";
+            echo "<div class='error'> Votre Pseudo ou MDP est faux </div>";
+        }
+            
     }else{
         echo "<form action='FormConnexion.php' method='Post'>
             Pseudo : <br/>
             <input type='text' name='Pseudo'><br/>
             Password : <br/>
             <input type='password' name='password'><br/>
-            <input type='submit' value='Connect'>
+            <input type='submit' value='Connect'><br/>
         </form>";
     }
     ?>
