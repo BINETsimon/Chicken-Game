@@ -24,7 +24,9 @@
 
         $count = mysqli_num_rows($result);
         if ($count == 1) {
-            echo "good";
+            echo "connecté <br/>";
+            session_start();
+            $_SESSION['Pseudo'] = $_POST['Pseudo'];
         } else {
             echo "<form action='FormConnexion.php' method='Post'>
                 Pseudo : <br/>
