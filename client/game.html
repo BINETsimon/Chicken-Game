@@ -116,7 +116,7 @@
 			
 		// Poule
 				function loadModelChicken() {
-				ChickenObject.traverse( function ( child ) {
+					ChickenObject.traverse( function ( child ) {
 						if ( child.isMesh ) child.material.map = texture;
 					} );
 					ChickenObject.position.set(0, 3, -36);
