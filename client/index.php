@@ -8,20 +8,18 @@
 </head>
 <script src="js/index/main.js"></script>
 <body>
-    <?php
-
-    if (isset($_SESSION['USER'])){
+    <?php    
+    if (isset($lol)){
         echo "<div id='USER'>
+            <a href='LOG/Disconnect.php'>disconnect</a>
             <h2>"+ $_SESSION['USER'] +"</h2>
-            <a href='Disconnect.php'>disconnect</a>
         </div>";
     }else{
         echo "<div id='FormLinks'>
-            <a href='FormInscription.php'>inscription</a>
-            <a href='FormConnexion.php'>Connexion</a>
+            <a href='LOG/FormInscription.php'>inscription</a>
+            <a href='LOG/FormConnexion.php'>Connexion</a>
         </div>";
     }
-        
     ?>
     <h1>CHICKEN GAME !</h1>
     <div id="box">

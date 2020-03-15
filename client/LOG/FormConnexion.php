@@ -22,11 +22,15 @@
         $sql = "SELECT ID FROM user WHERE Pseudo='" .$_POST['Pseudo']. "' and  Userpassword='" .$_POST['Userpassword']. "'";
         $result = $conn->query($sql);
 
+        $row = mysqli_fetch_assoc($result);
         $count = mysqli_num_rows($result);
+
         if ($count == 1) {
             echo "connecté <br/>";
             session_start();
             $_SESSION['Pseudo'] = $_POST['Pseudo'];
+            $_SESSION['ID'] = $row['ID'];
+            echo "<script>console.log('".$_SESSION['Pseudo']."' + ' : ' + '".$_SESSION['ID']."');</script>";
         } else {
             echo "<form action='FormConnexion.php' method='Post'>
                 Pseudo : <br/>
@@ -48,6 +52,6 @@
         </form>";
     }
     ?>
-    <a href="./index.php">retour</a>
+    <a href="../index.php">retour</a>
 </body>
 </html>
