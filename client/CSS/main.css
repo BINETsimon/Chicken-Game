@@ -126,6 +126,7 @@ button:hover{
 #box-Form form{
     text-align: center;
     font-size: 20px;
+    padding-bottom: 50px;
 }
 #box-Form form input{
     font-size: 20px;
