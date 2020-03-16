@@ -1,31 +1,203 @@
-body{
-    margin: 0;
+html{
     width: 100vw;
-    height: 80vh;
-    display: flex;
-    font-family: 'Dimbo';
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
+    height: 100vh;
+    font-family: "Dimbo";
+}
+button{
+    font-family: "Dimbo";   
+    font-size: 30px;
 }
 
 h1{
-    font-family: 'GrinchedRegular';
-    font-size: 100px;
+    font-family: "GrinchedRegular";
+    margin: 0;
+    font-size: 175px;
+}
+
+h2{
+    font-size: 60px;
+}
+
+h3{
+    margin: 0;
+    font-size: 30px;
+}
+
+body{
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#log{
+    position: absolute;
+}
+
+#menu{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+}
+
+#titles{
     text-align: center;
 }
 
-#box{
-    width: 80vw;
-    background-color: rgba(0,0,0,0.5);
+#lobby{
+    width: 50%;
+    max-height: 30%;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    font-size: 30px;
+}
+table{
+    width: 100%;
+}
+tr{
+    border-top: white solid 2px;
+    text-align: center;
 }
 
-#FormLinks{
+.td-top{
+    font-size: 40px;
+    text-align: left;
+    border: none;
+}
+#td-pseudo{
+    width: 50%;
+}
+
+#connect{
+    display: block;
+}
+#connected-buttons{
+    display: none;
+}
+#join{
+    display: initial;
+}
+#leave{
+    display: none;
+}
+#ready{
+    display: initial;
+}
+#not-ready{
+    display: none;
+}
+
+button{
+    padding: 20px;
+    background-color: #ece921;
+    border: #d3931b solid 3px;
+    border-radius: 20px;
+    outline: none; 
+    cursor: pointer;
+    margin: 15px;
+}
+button:hover{
+    transform: scale(1.05);
+}
+.btn-disable:hover{
+    transform: none;
+    cursor: initial;
+}
+
+/* POP-up */
+#pop-up-FORM{
     position: absolute;
-    left: 0;
-    top:0;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+#box-Form{
+    background-color: white;
+    border-radius: 50px;
+    margin: auto;
+    width: 50%;
+    padding: 50px;
+    position: relative;
+}
+#box-Form form{
+    text-align: center;
+    font-size: 20px;
+}
+#box-Form form input{
+    font-size: 20px;
+    outline: none;
+    border-radius: 10px;
+    padding: 5px;
+    border: #d3931b solid 3px;
+}
+#box-Form form input:hover{
+    background-color: #fdfcc7;
+}
+#inscription{
+    display: none;
+}
+#Connexion{
+    display: block;
 }
 
+#select-form{
+    width: 100%;
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+.select{
+    width: calc(50% - 1px);
+    float: left;
+    font-size: 30px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    text-align: center;
+}
+#select-co{
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 50px;
+}
+#select-in{
+    border-top-left-radius: 20px;
+    border-bottom-right-radius: 50px;
+    border-top: 2px solid black;
+    border-left: 2px solid black;
+    background-color: #888888;
+}
+#close{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    cursor: pointer;
+}
+#close1{
+    position: absolute;
+    width: 50px;
+    height: 10px;
+    background-color: #d3931b;
+    border-radius: 20px;
+    transform: rotate(45deg) translateY(14px) translateX(14px);
+}
+#close2{
+    position: absolute;
+    width: 50px;
+    height: 10px;
+    background-color: #d3931b;
+    border-radius: 20px;
+    transform: rotate(-45deg) translateY(14px) translateX(-14px);
+}
+
+
+/* Fonts */
 @font-face {
     font-family: "GrinchedRegular";
     src: url("../font/GrinchedRegular.otf");
