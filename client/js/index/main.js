@@ -1,5 +1,3 @@
-
-
 function connect() {
     document.getElementById('pop-up-FORM').style.display = "flex";
 }
@@ -68,8 +66,7 @@ function closePop(){
     document.getElementById('pop-up-FORM').style.display = "none";
 }
 
-function CONNECTED(){
-    closePop();
-    document.getElementById('connect').style.display = "none";
-    document.getElementById('connected-buttons').style.display= "block";
-}
+
+/* document.getElementById('pop-up-FORM').style.display = "none";
+document.getElementById('connect').style.display = "none";
+document.getElementById('connected-buttons').style.display= "block"; */

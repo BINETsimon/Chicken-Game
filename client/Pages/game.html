@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 	<head>
-		<title>three.js webgl - cloth simulation</title>
+		<title>Chicken Game</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
@@ -13,27 +13,27 @@
 			}
 		</style>
 	</head>
-	<script src="./node_modules/three/examples/js/controls/THREEx.KeyboardState.js"></script>
+	
+												<!-- *********** -->
+												<!-- PARTIE JEU -->
+												<!-- *********** -->
+
+	<script src="../node_modules/three/examples/js/controls/THREEx.KeyboardState.js"></script>
 	<!-- <script src="./js/find-posts.js"></script> -->
-	<script src="./js/geturi.js"></script>
-	<script src="./js/jquery.js"></script>
-	<script src="./js/sendPose.js"></script>
-	<script src="./js/create.js"></script>
 
 	<body>
 		<script type="module">
-			create();
-			import * as THREE from './node_modules/three/build/three.module.js';
+			import * as THREE from '../node_modules/three/build/three.module.js';
 
-			import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
-			import { MTLLoader } from './node_modules/three/examples/jsm/loaders/MTLLoader.js';
-			import { OBJLoader } from './node_modules/three/examples/jsm/loaders/OBJLoader.js';
-			import { ColladaLoader } from './node_modules/three/examples/jsm/loaders/ColladaLoader.js';
+			import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
+			import { MTLLoader } from '../node_modules/three/examples/jsm/loaders/MTLLoader.js';
+			import { OBJLoader } from '../node_modules/three/examples/jsm/loaders/OBJLoader.js';
+			import { ColladaLoader } from '../node_modules/three/examples/jsm/loaders/ColladaLoader.js';
 			
 			var renderer, camera, scene;
 			var CarObject, ChickenObject, TreeObject, plane, Road;
 
-			var player1Pose, player1,test;
+			var player1Pose, player1;
 
 			var keyboard = new THREEx.KeyboardState();
 
@@ -84,9 +84,18 @@
 				plane.rotation.x = -Math.PI/2;
 
 		//road
+				var groundTexture = loader.load( '../3Dmodel/textures/' );
+				groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
+				groundTexture.repeat.set( 25, 25 );
+				groundTexture.anisotropy = 16;
+				groundTexture.encoding = THREE.sRGBEncoding;
+
+				var groundMaterial = new THREE.MeshLambertMaterial( { map: groundTexture } );		
+
 				var geometry = new THREE.PlaneBufferGeometry( 500, 20000 );
-				var material = new THREE.MeshBasicMaterial({color: 0x282828});
+				var material = new THREE.MeshBasicMaterial(groundMaterial);
 				Road = new THREE.Mesh(geometry, material);
+				Road.receiveShadow = true;
 				scene.add(Road);
 				Road.position.set(0, 3, 0);
 				Road.rotation.x = -Math.PI/2;
@@ -107,10 +116,10 @@
 				};
 				// texture
 				var textureLoader = new THREE.TextureLoader( CarModel );
-				var textureCar = textureLoader.load( './3Dmodel/textures/NewTexture.jpg' );
+				var textureCar = textureLoader.load( '../3Dmodel/textures/NewTexture.jpg' );
 
 				var loader = new OBJLoader( CarModel );
-				loader.load( './3Dmodel/source/bmw.obj', function ( obj ) {
+				loader.load( '../3Dmodel/source/bmw.obj', function ( obj ) {
 					CarObject = obj;
 				}, onProgress, onError );
 			
@@ -132,10 +141,10 @@
 				};
 				// texture
 				var textureLoader = new THREE.TextureLoader( ChickenModel );
-				var texture = textureLoader.load( './3Dmodel/textures/Diffuse_Chicken.png' );
+				var texture = textureLoader.load( '../3Dmodel/textures/Diffuse_Chicken.png' );
 
 				var loader = new OBJLoader( ChickenModel );
-				loader.load( './3Dmodel/source/Chicken.obj', function ( obj ) {
+				loader.load( '../3Dmodel/source/Chicken.obj', function ( obj ) {
 					ChickenObject = obj;
 				}, onProgress, onError );
 
@@ -173,11 +182,7 @@
 
 
 
-				var geometry = new THREE.BoxGeometry( 20, 10, 10 );
-				var material = new THREE.MeshBasicMaterial({color: 0xff0000});
-				test = new THREE.Mesh(geometry, material);
-				scene.add(test);
-				test.position.set(0,10,0);
+				
 
 
 
@@ -189,19 +194,19 @@
 			function moovePoule() {
 				if (ChickenObject) {
 					if(keyboard.pressed("right") || keyboard.pressed("left") || keyboard.pressed("up") || keyboard.pressed("down")){
-						if (keyboard.pressed("up")) {// up arrow
+						if ((keyboard.pressed("up")) && (player1Pose.position.z > -500)) {// up arrow
 							player1.rotation.y = 0;
 							player1Pose.translateZ(-2);
 						}
-						else if (keyboard.pressed("down")) {// down arrow
+						else if ((keyboard.pressed("down")) && (player1Pose.position.z < 250)) {// down arrow
 							player1.rotation.y = Math.PI;
 							player1Pose.translateZ(2);
 						}
-						else if (keyboard.pressed("left")) {// left arrow
+						else if ((keyboard.pressed("left")) && (player1Pose.position.x > -240)) {// left arrow
 							player1.rotation.y = Math.PI/2;
 							player1Pose.translateX(-2);
 						}
-						else if (keyboard.pressed("right")) {// right arrow
+						else if ((keyboard.pressed("right")) && (player1Pose.position.x < 240)) {// right arrow
 							player1.rotation.y = -Math.PI/2;
 							player1Pose.translateX(2);
 						}
@@ -225,8 +230,6 @@
 
 			
 			function animate() {
-
-				sendPose(player1Pose.position.z, player1Pose.position.x);
 
 				moovePoule();
 

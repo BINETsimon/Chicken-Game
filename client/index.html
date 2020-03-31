@@ -7,6 +7,13 @@
     <title>Lobby</title>
 </head>
 <script src="JS/index/main.js"></script>
+<script src="JS/index/jquery.js"></script>
+<script src="JS/index/log.js"></script>
+
+<!-- *********** -->
+<!-- PARTIE LOG -->
+<!-- *********** -->
+
 <body>
     <div id="pop-up-FORM">
         <div id="box-Form">
@@ -16,19 +23,19 @@
             </div>
             <form id="connexion" action="javascript:void(0)">
                 <h3>Pseudo :</h3>
-                <input type="text" name="Pseudo"><br/>
+                <input type="text" id="CoPseudo"><br/>
                 <h3>Mot de passe :</h3>
-                <input type="password" name="Userpassword"><br/>
+                <input type="password" id="CoUserpassword"><br/>
                 <button onclick="CONNECTED()">Se connecter</button>
             </form>
-            <form id="inscription" ction="javascript:void(0)">
+            <form id="inscription" action="javascript:void(0)">
                 <h3>Pseudo :</h3>
-                <input type="text" name="Pseudo"><br/>
+                <input type="text" id="InsPseudo"><br/>
                 <h3>Mot de passe :</h3>
-                <input type="password" name="Userpassword"><br/>
+                <input type="password" id="InsUserpassword"><br/>
                 <h3>Confirmer le Mot de passe :</h3>
-                <input type="password" name="Confpassword"><br/>
-                <button onclick="">S'inscrire</button>
+                <input type="password" id="InsConfpassword"><br/>
+                <button onclick="INSCRPTION()">S'inscrire</button>
             </form>
             <div id="select-form">
                 <div class="select" id="select-co" onclick="change('Connexion')">Connexion</div>
