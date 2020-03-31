@@ -11,6 +11,22 @@
 				height: 100vh;
 				overflow: hidden;
 			}
+			#compteur{
+				position: absolute;
+				background-color: yellow;
+				color: black;
+				padding: 10px;
+			}
+			#GO{
+				position: absolute;
+				width: 100vw;
+				height: 100vh;
+				background-color: rgba(0, 0, 0, 0.5);
+				display: none;
+				justify-content: center;
+				align-items: center;
+				flex-direction: column;
+			}
 		</style>
 	</head>
 	
@@ -22,6 +38,14 @@
 	<!-- <script src="./js/find-posts.js"></script> -->
 
 	<body>
+		<div id="GO">
+			<h1>GAME OVER</h1>
+			<button onclick="location.reload();">Restart</button>
+		</div>
+		<div id="compteur">
+			<h2>Nombre de voitures esquivées : <span id="esquive"> 0 </span> </h2>
+		</div>
+
 		<script type="module">
 			import * as THREE from '../node_modules/three/build/three.module.js';
 
@@ -32,10 +56,18 @@
 			
 			var renderer, camera, scene;
 			var CarObject, ChickenObject, TreeObject, plane, Road;
-
+			
+			var carLaunched, car;
+			var carset = false;
 			var player1Pose, player1;
 
+			var carSFX, deathSFX;
+
 			var keyboard = new THREEx.KeyboardState();
+			
+			var score = 0;
+			var stop = false;
+			var speed = 10;
 
 			function init() {
 				var container = document.createElement( 'div' );
@@ -84,17 +116,17 @@
 				plane.rotation.x = -Math.PI/2;
 
 		//road
-				var groundTexture = loader.load( '../3Dmodel/textures/' );
-				groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
-				groundTexture.repeat.set( 25, 25 );
-				groundTexture.anisotropy = 16;
-				groundTexture.encoding = THREE.sRGBEncoding;
+				var loader = new THREE.TextureLoader();
+				var roadTexture = loader.load('../3Dmodel/textures/AsphaltTexture.jpg');
+				roadTexture.wrapS = roadTexture.wrapT = THREE.RepeatWrapping;
+				roadTexture.repeat.set( 4, 7 );
+				roadTexture.anisotropy = 16;
+				roadTexture.encoding = THREE.sRGBEncoding;
 
-				var groundMaterial = new THREE.MeshLambertMaterial( { map: groundTexture } );		
+				var roadMaterial = new THREE.MeshLambertMaterial( { map: roadTexture } );		
 
-				var geometry = new THREE.PlaneBufferGeometry( 500, 20000 );
-				var material = new THREE.MeshBasicMaterial(groundMaterial);
-				Road = new THREE.Mesh(geometry, material);
+				var geometry = new THREE.PlaneBufferGeometry( 500, 2000 );
+				Road = new THREE.Mesh(geometry, roadMaterial);
 				Road.receiveShadow = true;
 				scene.add(Road);
 				Road.position.set(0, 3, 0);
@@ -102,12 +134,20 @@
 
 		// Car
 				function loadModelCar() {
-					CarObject.traverse( function ( child ) {
-						if ( child.isMesh ) child.material.map = textureCar;
-					} );
-					CarObject.position.set(0,23,-500);
-					CarObject.scale.set(1, 1, 1);
-					scene.add( CarObject );
+					car = [CarObject, CarObject.clone(), CarObject.clone(), CarObject.clone(), CarObject.clone(), CarObject.clone()];
+					carLaunched = new Array;
+					carSFX = new Array;
+					for (var i=0; i< car.length; i++) {
+						car[i].traverse( function ( child ) {
+							if ( child.isMesh ) child.material.map = textureCar[0];
+						} );
+						car[i].position.set(0,23,-650);
+						car[i].scale.set(1, 1, 1);
+						scene.add( car[i] );
+						carLaunched.push(false);
+						carSFX.push(new sound("../SoundFx/car.mp3"));
+					}
+					carset = true;
 				}
 
 				var CarModel = new THREE.LoadingManager( loadModelCar );
@@ -115,13 +155,17 @@
 					console.log( item, loaded, total );
 				};
 				// texture
-				var textureLoader = new THREE.TextureLoader( CarModel );
-				var textureCar = textureLoader.load( '../3Dmodel/textures/NewTexture.jpg' );
+				/* var textureLoader = new THREE.TextureLoader( CarModel ); */
+				var textureCar = [new THREE.TextureLoader( CarModel ).load( '../3Dmodel/textures/texture_car01.jpg' )/*, 
+									 new THREE.TextureLoader( CarModel ).load( '../3Dmodel/textures/texture_car02.jpg' ), 
+									new THREE.TextureLoader( CarModel ).load( '../3Dmodel/textures/texture_car03.jpg' ) */];
 
 				var loader = new OBJLoader( CarModel );
 				loader.load( '../3Dmodel/source/bmw.obj', function ( obj ) {
 					CarObject = obj;
 				}, onProgress, onError );
+
+				
 			
 		// Poule
 				function loadModelChicken() {
@@ -147,6 +191,7 @@
 				loader.load( '../3Dmodel/source/Chicken.obj', function ( obj ) {
 					ChickenObject = obj;
 				}, onProgress, onError );
+				deathSFX = new sound("../SoundFx/Chickendeath.mp3");
 
 		// model
 				function onProgress( xhr ) {
@@ -159,33 +204,15 @@
 				function onError() {}
 			
 		//tree
-				/* var loader = new THREE.ColladaLoader();
-				loader.options.convertUpAxis = true;
-				loader.load('./3Dmodel/lowtree.ChickenObject', function (collada) {
-					tree = collada.scene;
-					tree.scale.set(200, 200, 200);
-					// tree.position.set(0,0.0,0);// éventuellement le déplacer
-					tree.updateMatrix();
-					scene.add(tree);
-				}); */
 
-				//
+
+		//Lights
 				var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
 				scene.add( ambientLight );
 
 				var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
 				directionalLight.position.set( 1, 1, 0 ).normalize();
 				scene.add( directionalLight );
-
-		
-
-
-
-
-				
-
-
-
 
 			}
 
@@ -228,10 +255,78 @@
 				}
 			}
 
+			function die(){
+				scene.remove(player1Pose);
+				deathSFX.play();
+				document.getElementById('GO').style.display = "flex";
+				stop = true;
+			}
+
+			function launchCar() {
+				for (var i=0; i<car.length; i++) {
+					if(carLaunched[i] == false){
+						car[i].position.x = Math.floor(Math.random() * (210 + 210) - 210 )
+						carLaunched[i] = true;
+						carSFX[i].play();
+						console.log(i);
+						break;
+					}
+				}
+			}
+			
+			function sound(src) {
+				this.sound = document.createElement("audio");
+				this.sound.src = src;
+				this.sound.setAttribute("preload", "auto");
+				this.sound.setAttribute("controls", "none");
+				this.sound.style.display = "none";
+				document.body.appendChild(this.sound);
+				this.play = function(){
+					this.sound.play();
+				}  
+			}
+
+			
+			function Esquive() {
+				score++;
+				document.getElementById('esquive').innerHTML = score;
+			}
+
 			
 			function animate() {
+				if (!stop){
 
-				moovePoule();
+					moovePoule();
+
+					if (carset==true){
+						var go = Math.floor(Math.random() * 50);
+						if(go == 49){
+							launchCar ();
+						}
+
+						for (var i=0; i<carLaunched.length; i++){
+							if(carLaunched[i] == true){
+								if ((player1Pose.position.z > (car[i].position.z-60)) &&
+									(player1Pose.position.z < (car[i].position.z+30)) && 
+									(player1Pose.position.x > (car[i].position.x-30)) && 
+									(player1Pose.position.x < (car[i].position.x+30))){
+									die();
+								}
+
+								if (score == speed){
+									speed++;
+								}
+								car[i].position.z += speed;
+
+								if (car[i].position.z >= 400){
+									Esquive();
+									car[i].position.z = -650;
+									carLaunched[i] = false;
+								}
+							}
+						}
+					}
+				}
 
 				renderer.render( scene, camera );
 				requestAnimationFrame(function(){ animate(); });
